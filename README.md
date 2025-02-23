@@ -11,7 +11,7 @@ Ce projet a pour objectif d'analyser les logs Apache à l'aide d'une interface w
 
 ## Auteurs
 
-- [**Sorway**](https://github.com/Sorway)
+- [**Jonathan**](https://github.com/Sorway)
 - Alain
 - Mathéo
 - Erwann
