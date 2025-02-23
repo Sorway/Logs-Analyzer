@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Analyseur de logs</title>
+
+        <!-- Embed -->
+        <meta content="Logs Analyzer" property="og:title"/>
+        <meta content="Ce site analyse les fichiers de logs Apache2 (access.log) pour extraire des statistiques comme le nombre total de requêtes, les codes de statut HTTP, les méthodes utilisées, les IPs les plus actives et les erreurs détectées." property="og:description"/>
+        <meta content="https://logs-analyzer.jonathan-gp.fr/" property="og:url"/>
+        <meta content="https://logs-analyzer.jonathan-gp.fr/images/apache2.png" property="og:image"/>
+        <meta content="#d63031" data-react-helmet="true" name="theme-color"/>
+
+        <link rel="stylesheet" href="./css/style.css">
+        <link rel="stylesheet" href="./css/index.css">
+        <link rel="icon" type="image/png" href="/icons/logo.ico">
+    </head>
+    <body>
+        <header>
+            <div class="header-left">
+                <div class="logo">
+                    <img src="/images/apache2.png" alt="logo apache">
+                </div>
+                <h1>Analyseur de logs</h1>
+            </div>
+            <div class="user-menu">
+                <a href="/logout" class="bouton">
+                    <span>Déconnexion</span>
+                    👋
+                </a>
+            </div>
+        </header>
+
+        <nav class="menu">
+            <a href="/" class="bouton">📤 Importez les logs</a>
+            <a href="/stats" class="bouton">📊 Statistiques</a>
+        </nav>
+
+        <main>
+            <section id="upload">
+                <div class="upload-container">
+                    <h2>Importez vos fichiers logs</h2>
+                    <form action="/upload" method="post" enctype="multipart/form-data">
+                        <label for="fichier">Sélectionnez un fichier de logs :</label>
+                        <input type="file" id="fichier" name="fichier" accept=".log,.txt" required>
+                        <button type="submit" id="send">
+                            <span>Analyser le fichier</span>
+                            📋
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="tableau">
+                <h2>Analyse des logs</h2>
+                <% if (typeof logs !== 'undefined' && logs && logs.length > 0) { %>
+                    <div class="column-selector">
+                        <h3>Colonnes à afficher :</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="column-toggle" data-column="1" checked>
+                                Adresse IP
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="column-toggle" data-column="2" checked>
+                                Date
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="column-toggle" data-column="3" checked>
+                                Méthode
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="column-toggle" data-column="4" checked>
+                                Chemin
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="column-toggle" data-column="5" checked>
+                                Status
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="column-toggle" data-column="6" checked>
+                                Taille
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="column-toggle" data-column="7" checked>
+                                Navigateur
+                            </label>
+                        </div>
+                    </div>
+
+                    <table id="tableauresult">
+                        <thead>
+                            <tr>
+                                <th class="column-0">#</th>
+                                <th class="column-1">Adresse IP</th>
+                                <th class="column-2">Date</th>
+                                <th class="column-3">Méthode</th>
+                                <th class="column-4">Chemin</th>
+                                <th class="column-5">Status</th>
+                                <th class="column-6">Taille</th>
+                                <th class="column-7">Navigateur</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% logs.forEach(function(log) { %>
+                                <tr>
+                                    <td class="column-0"><%= log.id %></td>
+                                    <td class="column-1"><%= log.ip %></td>
+                                    <td class="column-2"><%= log.date %></td>
+                                    <td class="column-3"><%= log.method %></td>
+                                    <td class="column-4"><%= log.path %></td>
+                                    <td class="column-5" data-status="<%= log.status %>"><%= log.status %></td>
+                                    <td class="column-6"><%= Number(log.size).toLocaleString() %> o</td>
+                                    <td class="column-7"><%= log.browser %></td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <div class="message">
+                        <p>Aucun log à afficher. Veuillez importer un fichier de logs.</p>
+                    </div>
+                <% } %>
+            </section>
+        </main>
+
+        <footer>
+            <p>Copyright &copy; <%= new Date().getFullYear() %> - MARTIN Mathéo, <a href="/redirect-alain" target="_blank">MOLINARI Alain</a>, COUET Erwann, <a href="/redirect-jonathan" target="_blank">PANZER Jonathan</a></p>
+        </footer>
+
+        <!-- Importation des scripts -->
+        <script src="./javascript/columns-selector.js" crossorigin="anonymous"></script>
+    </body>
+</html>

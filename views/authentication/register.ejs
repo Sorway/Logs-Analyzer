@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Inscription - Analyseur de logs</title>
+
+        <!-- Embed -->
+        <meta content="Logs Analyzer" property="og:title"/>
+        <meta content="Ce site analyse les fichiers de logs Apache2 (access.log) pour extraire des statistiques comme le nombre total de requêtes, les codes de statut HTTP, les méthodes utilisées, les IPs les plus actives et les erreurs détectées." property="og:description"/>
+        <meta content="https://logs-analyzer.jonathan-gp.fr/" property="og:url"/>
+        <meta content="https://logs-analyzer.jonathan-gp.fr/images/apache2.png" property="og:image"/>
+        <meta content="#d63031" data-react-helmet="true" name="theme-color"/>
+
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="/css/auth.css">
+        <link rel="icon" type="image/png" href="/icons/logo.ico">
+    </head>
+    <body>
+        <main class="auth-container">
+            <div class="auth-box">
+                <div class="auth-header">
+                    <img src="/images/apache2.png" alt="logo apache" class="auth-logo">
+                    <h1>Inscription</h1>
+                </div>
+
+                <% if (error) { %>
+                    <div class="message error">
+                        <%= error %>
+                    </div>
+                <% } %>
+
+                <form action="/register" method="POST" class="auth-form">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Mot de passe</label>
+                        <input type="password" id="password" name="password" required minlength="6">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirmer le mot de passe</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+                    </div>
+
+                    <button type="submit" class="auth-button">S'inscrire</button>
+                </form>
+
+                <div class="auth-links">
+                    <p>Déjà un compte ? <a href="/login">Se connecter</a></p>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>

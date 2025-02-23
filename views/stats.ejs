@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Statistiques - Analyseur de logs</title>
+
+        <!-- Embed -->
+        <meta content="Logs Analyzer" property="og:title"/>
+        <meta content="Ce site analyse les fichiers de logs Apache2 (access.log) pour extraire des statistiques comme le nombre total de requêtes, les codes de statut HTTP, les méthodes utilisées, les IPs les plus actives et les erreurs détectées." property="og:description"/>
+        <meta content="https://logs-analyzer.jonathan-gp.fr/" property="og:url"/>
+        <meta content="https://logs-analyzer.jonathan-gp.fr/images/apache2.png" property="og:image"/>
+        <meta content="#d63031" data-react-helmet="true" name="theme-color"/>
+
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="./css/stats.css">
+        <link rel="icon" type="image/png" href="/icons/logo.ico">
+
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+
+    <body>
+        <header>
+            <div class="header-left">
+                <div class="logo">
+                    <img src="/images/apache2.png" alt="logo apache">
+                </div>
+                <h1>Statistiques des logs</h1>
+            </div>
+            <div class="user-menu">
+                <a href="/logout" class="bouton">
+                    <span>Déconnexion</span>
+                    👋
+                </a>
+            </div>
+        </header>
+
+        <nav class="menu">
+            <a href="/" class="bouton">📤 Importez les logs</a>
+            <a href="/stats" class="bouton active">📈 Statistiques</a>
+        </nav>
+
+        <main>
+            <% if (typeof stats !== 'undefined' && stats) { %>
+                <section class="stats-section">
+                    <div class="stats-grid">
+                        <div class="stats-card">
+                            <h3>Distribution des Codes HTTP</h3>
+                            <canvas id="httpCodesChart"></canvas>
+                        </div>
+                        <div class="stats-card">
+                            <h3>Top 10 des Adresses IP</h3>
+                            <div class="ip-list">
+                                <% stats.topIPs.forEach(function(ip, index) { %>
+                                    <div class="ip-item">
+                                        <span class="ip-rank"><%= index + 1 %></span>
+                                        <span class="ip-address"><%= ip.ip %></span>
+                                        <span class="ip-count"><%= ip.count %> requêtes</span>
+                                        <div class="ip-bar" style="width: <%= (ip.count / stats.topIPs[0].count) * 100 %>%"></div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            <% } else { %>
+                <div class="message error">
+                    <p>Aucune donnée disponible. Veuillez d'abord importer un fichier de logs.</p>
+                </div>
+            <% } %>
+        </main>
+
+        <footer>
+            <p>Copyright &copy; <%= new Date().getFullYear() %> - MARTIN Mathéo, <a href="/redirect-alain" target="_blank">MOLINARI Alain</a>, COUET Erwann, <a href="/redirect-jonathan" target="_blank">PANZER Jonathan</a></p>
+        </footer>
+
+        <% if (typeof stats !== 'undefined' && stats) { %>
+            <script>
+                const ctx = document.getElementById('httpCodesChart').getContext('2d');
+                const httpCodesData = <%- JSON.stringify(stats.httpCodes) %>;
+
+                const getStatusColor = (code) => {
+                    if (code.startsWith('2')) return '#22c55e';
+                    if (code.startsWith('3')) return '#3b82f6';
+                    if (code.startsWith('4')) return '#ef4444';
+                    if (code.startsWith('5')) return '#f59e0b';
+                    return '#64748b';
+                };
+
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(httpCodesData),
+                        datasets: [{
+                            data: Object.values(httpCodesData),
+                            backgroundColor: Object.keys(httpCodesData).map(getStatusColor),
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    font: {
+                                        family: 'Inter'
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.raw;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return `Code ${label}: ${value} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            </script>
+        <% } %>
+    </body>
+</html>
