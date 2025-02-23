@@ -37,7 +37,7 @@ L'application permet :
 
 1. Clonez ce dépôt :
    ```bash
-   git clone https://github.com/LP-ASSR/Logs-Analyzer.git
+   git clone https://github.com/Sorway/Logs-Analyzer.git
    ```
 2. Installez les dépendances :
    ```bash
